@@ -1,0 +1,47 @@
+#
+# @(#)eabi-jtwi.gmk
+#
+######################################################################
+#
+# JTWI specific defines for compiler
+# Generic defines are in ccs.gmk
+# This file should be included after common/makefiles/Defs.gmk
+#
+######################################################################
+ifndef _EABI_JTWI_GMK_
+_EABI_JTWI_GMK_   =
+
+ifeq ($(strip $(DEVKITPRO)),)
+$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro")
+endif
+
+# CLDC HI library
+#EABI_JTWI_LIBS   += $(CLDC_DIST_DIR)/lib/cldc_vm$(g)$(r)$(LIB_SUFFIX)
+EABI_CLDC_LIBS = $(CLDC_DIST_DIR)/lib/cldc_vm$(g)$(r)$(LIB_SUFFIX)
+
+ifeq ($(USE_MULTIPLE_ISOLATES), true)
+ifeq ($(USE_I3_TEST), true)
+EABI_JTWI_LIBS   += $(CLDC_DIST_DIR)/lib/cldc_vmtest$(g)$(r)$(LIB_SUFFIX)
+endif
+endif
+
+PCSL_TARGET_DIR  = $(PCSL_OUTPUT_DIR)/$(TARGET_OS)_$(TARGET_CPU)
+LD_FLAGS        +=
+EXTRA_INCLUDES  += -I$(PCSL_TARGET_DIR)/inc 
+
+LIBNDS_DIR=$(DEVKITPRO)/libnds
+EXTRA_INCLUDES+=-I$(LIBNDS_DIR)/include/
+
+PCSL_TARGET_LIBS = $(PCSL_TARGET_DIR)/lib/libpcsl_file$(LIB_SUFFIX) \
+                   $(PCSL_TARGET_DIR)/lib/libpcsl_memory$(LIB_SUFFIX) \
+                   $(PCSL_TARGET_DIR)/lib/libpcsl_print$(LIB_SUFFIX) \
+                   $(PCSL_TARGET_DIR)/lib/libpcsl_string$(LIB_SUFFIX) \
+                   $(PCSL_TARGET_DIR)/lib/libpcsl_network$(LIB_SUFFIX)
+EABI_JTWI_LIBS  += $(PCSL_TARGET_LIBS)
+
+
+LIBS            += $(EABI_JTWI_LIBS)
+MIDP_DEPS       += $(EABI_JTWI_LIBS)
+
+endif
+

@@ -1,0 +1,18 @@
+######################################################################
+#
+# Makefile for building and packaging post processing
+#
+######################################################################
+
+
+# Some additional targets defined by ES
+
+midp: $(BINDIR)/runMidlet$(g).nds
+
+$(BINDIR)/runMidlet$(g).nds: $(BINDIR)/runMidlet$(g).arm9
+	@echo " ...Generate .nds file."
+	@ndstool -c $@ -9 $<
+
+$(BINDIR)/runMidlet$(g).arm9: $(BINDIR)/runMidlet$(g)$(EXE)
+	@echo " ...Copy exe to arm9 file."
+	@$(OBJCOPY) -O binary $< $@

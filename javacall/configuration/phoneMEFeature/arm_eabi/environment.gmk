@@ -1,0 +1,105 @@
+#
+# Copyright  1990-2006 Sun Microsystems, Inc. All rights reserved.
+# SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+#
+
+#Flag USE_JSR_XX_JC means that JSR_XX will be included to the javacall library if the flag
+#is set to 'true' (example: USE_JSR_XX_JC=true). JSR_XX will not be included to the javacall
+#library if the flag USE_JSR_XX_JC is not 'true' (example: USE_JSR_XX_JC=false). 
+#
+#For each used JSR path to its particular implementation shall be specified explicitly as javacall
+#library can be formed from JSRs taken from different locations
+#JSR_XX_JC_IMPL_PATH varibale sets path to implementation 
+#
+#For 'midp' USE_MIDP_JC and MIDP_JC_IMPL_PATH variables are used
+#For 'nams' USE_NATIVE_AMS_JC and NATIVE_AMS_JC_IMPL_PATH variables are used
+
+ifeq ($(strip $(DEVKITPRO)),)
+$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro")
+endif
+
+JSR_LIST = COMMON MIDP JSR_120 JSR_135 JSR_177 JSR_211
+
+USE_MIDP_JC=true
+MIDP_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_COMMON=true
+COMMON_JC_IMPL_PATH = $(JAVACALL_DIR)/implementation/nds
+
+USE_JSR_120_JC=true
+JSR_120_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_135_JC=true
+JSR_135_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_177_JC=true
+JSR_177_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_179_JC=true
+JSR_179_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_205_JC=true
+JSR_205_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_211_JC=true
+JSR_211_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_234_JC=true
+JSR_234_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_238_JC=true
+JSR_238_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_75_JC=true
+JSR_75_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_JSR_82_JC=true
+JSR_82_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+USE_NATIVE_AMS_JC=false
+NATIVE_AMS_JC_IMPL_PATH=$(JAVACALL_OSS_DIR)/implementation/nds
+
+#For each project location for basic definitions shall be specified
+#(location of the used javacall_platform_defs.h)
+JAVACALL_PLATFORM_DEFS_DIR=$(JAVACALL_DIR)/implementation/nds
+
+#SOURCE_OUTPUT_LIST += $(foreach jsr,$(JSR_LIST), $(if $(PREFIX_$(USE_$(jsr))), $($(jsr)_JC_IMPL_PATH)/$($(jsr)_JC_DIR) javacall/implementation/nds))
+#SOURCE_OUTPUT_LIST += $(JAVACALL_PLATFORM_DEFS_DIR)/javacall_platform_defs.h javacall/implementation/nds
+#SOURCE_OUTPUT_LIST += $(JAVACALL_DIR)/configuration/stubs/win32_x86 javacall/configuration/stubs
+
+#Specify list of utility objects necessary for the build
+UTILITIES =                 \
+        javautil_jad_parser \
+        javautil_string     \
+        javautil_unicode    \
+        javautil_printf
+
+#Compile options that are not common for all configurations can be specified in
+#SPECIFIC_DEFINITIONS variable
+SPECIFIC_DEFINITIONS+=-I$(COMMON_JC_IMPL_PATH)/$(COMMON_JC_DIR)/
+SPECIFIC_DEFINITIONS+=-I$(MIDP_JC_IMPL_PATH)/$(MIDP_JC_DIR)/
+LIBNDS_DIR=$(DEVKITPRO)/libnds
+SPECIFIC_DEFINITIONS+=-I$(LIBNDS_DIR)/include/
+#SPECIFIC_DEFINITIONS+=-Ic:/devkitPro/libnds/include/
+
+ifeq ($(USE_JSR_135),true)
+SPECIFIC_DEFINITIONS+=-I$(JSR_135_JC_IMPL_PATH)/$(JSR_135_JC_DIR)/
+endif
+
+ifeq ($(USE_JSR_120),true)
+SPECIFIC_DEFINITIONS+= -DENABLE_JSR_120=1 
+endif
+
+ifeq ($(USE_JSR_211),true)
+SPECIFIC_DEFINITIONS+=-I$(JSR_211_JC_IMPL_PATH)/$(JSR_211_JC_DIR)/inc/
+endif
+
+#Porting objects that are added to PORTING_OBJECTS by default rules can be excluded
+#from the javacall library by setting FILTER_OBJECTS variable
+FILTER_OBJECTS=sos_network.o
+
+ifneq ($(USE_STATIC_PROPERTIES),true)
+SPECIFIC_DEFINITIONS += -DUSE_PROPERTIES_FROM_FS
+endif
+
+CONFIGURATION_PROPERTIES_FILE = properties.xml

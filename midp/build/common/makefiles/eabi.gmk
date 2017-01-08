@@ -1,0 +1,69 @@
+#
+# @(#)eabi.gmk
+#
+######################################################################
+#
+# Generic compiler specific defines
+# MIDP specific directories and libraries defines are in eabi-jtwi.gmk
+#
+######################################################################
+ifndef _EABI_GMK_
+_EABI_GMK_        =
+
+# Suffix
+LIB_SUFFIX        = .a
+SHARED_LIB_SUFFIX = .so
+OBJ_SUFFIX        = .o
+TARGET_EXE        = .elf
+
+# GCC
+USE_GCC = false
+
+EABI_PREFIX = arm-eabi-
+
+CC = $(EABI_PREFIX)gcc
+CPP = $(EABI_PREFIX)g++
+CC_OUTPUT = -o 
+OBJCOPY = $(EABI_PREFIX)objcopy
+
+LD = $(EABI_PREFIX)g++
+LINKER_OUTPUT = -o
+ARCH= -mthumb-interwork
+LD_FLAGS +=-specs=ds_arm9.specs -g $(ARCH)
+
+EXTRA_LIBS += $(JAVACALL_LIB_DIR)/javacall$(g).a
+LIBS += $(EXTRA_LIBS)
+
+LIBPATHS = $(foreach dir,$(LIBNDS_DIR),-L$(dir)/lib)
+LIB_FLAGS += $(LIBPATHS)
+LIB_FLAGS += -lfat -lram -ldswifi9 -lnds9
+
+AR = $(EABI_PREFIX)ar
+LIB_OUTPUT =
+
+ASM = $(EABI_PREFIX)as
+ASM_FLAGS = 
+ASM_OUTPUT = -o
+
+# commands for AR (lib) script
+MRI_ADD = 'ADDMOD '
+MRI_CREATE = 'CREATE '
+MRI_SAVE = 'SAVE'
+MRI_OPT = -M <
+
+# refer to src/ams/objlib.gmk
+RANLIB = true
+
+CFLAGS += -MMD -MP -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer $(ARCH)\
+-ffast-math -mthumb-interwork -fno-exceptions
+
+EXTRA_CFLAGS += -DARM9 -DUNDER_EABI 
+
+AR_FLAGS = r 
+
+ifeq ($(USE_DEBUG), true)
+EXTRA_CFLAGS += -g -D_DEBUG
+LD_FLAGS += -g
+endif
+
+endif
