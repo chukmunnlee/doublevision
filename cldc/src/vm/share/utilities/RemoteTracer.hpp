@@ -30,7 +30,7 @@
  * Provide statistical data about heap object distributions
  * over a socket to a remote observation and display tool.
  *
- * See 'src/tools/remotetracer/REAME.html' for the latter.
+ * See 'src/tools/remotetracer/README.html' for the latter.
  */
 class RemoteTracer: public AllStatic {
  public:
